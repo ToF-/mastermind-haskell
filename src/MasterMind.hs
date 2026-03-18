@@ -47,10 +47,14 @@ maxResults candidate candidates = maximum $ map length $ group $ sort $  map (ma
 
 
 minMaxResults :: [CodeWord] -> CodeWord
-minMaxResults candidates = snd $ minimum [(maxResults cw candidates, cw) |  cw <- allCodewords]
+minMaxResults candidates = snd $ minimum
+    [(maxResults cw candidates * 2 + if cw `elem` candidates then 0 else 1, cw) |  cw <- allCodewords]
 
 narrowSolution :: CodeWord -> Result -> [CodeWord] -> [CodeWord]
 narrowSolution codeword result candidates = filter (\candidate -> match candidate codeword == result) candidates
 
 guessMove :: CodeWord -> CodeWord -> [CodeWord] -> (CodeWord, Result)
-guessMove guess secret _ | match guess secret == (4, 0) = (guess, (4, 0))
+guessMove guess secret candidates = (newGuess, newResult)
+    where
+        newGuess = minMaxResults candidates
+        newResult = match newGuess secret

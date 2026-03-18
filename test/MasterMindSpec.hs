@@ -45,7 +45,14 @@ spec = do
 
         describe "guessMove" $ do
             it "should return a list of moves and results when secret is guessed" $ do
-                guessMove [1,1,2,2] [1,1,2,2] allCodewords `shouldBe` ([1,1,2,2],(4,0))
+                let solution = narrowSolution [1,1,2,2] (0, 1) allCodewords
+                guessMove [1,1,2,2] [4,6,1,5] solution `shouldBe` ([2,3,4,4], (0, 1))
+                let solution' = narrowSolution [2,3,4,4] (0, 1) solution
+                guessMove [2,3,4,4] [4,6,1,5] solution' `shouldBe` ([3,5,1,6],(1,2))
+                let solution'' = narrowSolution [3,5,1,6] (1, 2) solution'
+                guessMove [3,5,1,6] [4,6,1,5] solution'' `shouldBe` ([1,4,6,1],(0,3))
+                let solution''' = narrowSolution [1,4,6,1] (0, 3) solution''
+                guessMove [1,4,6,1] [4,6,1,5] solution''' `shouldBe` ([4,6,1,5],(4,0))
 -- 1) 1122 : ○
 -- 2) 2344 : ○
 -- 3) 3516 : ●○○
