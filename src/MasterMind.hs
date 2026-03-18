@@ -6,6 +6,7 @@ import Data.List (group, sort)
 type Peg = Int
 type CodeWord = [Peg]
 type Result = (Int, Int)
+type Move = (CodeWord, Result)
 colors = [1..6]
 
 matches :: CodeWord -> CodeWord -> Int
@@ -53,8 +54,24 @@ minMaxResults candidates = snd $ minimum
 narrowSolution :: CodeWord -> Result -> [CodeWord] -> [CodeWord]
 narrowSolution codeword result candidates = filter (\candidate -> match candidate codeword == result) candidates
 
-guessMove :: CodeWord -> CodeWord -> [CodeWord] -> (CodeWord, Result)
+guessMove :: CodeWord -> CodeWord -> [CodeWord] -> Move
 guessMove guess secret candidates = (newGuess, newResult)
     where
         newGuess = minMaxResults candidates
         newResult = match newGuess secret
+
+guess :: CodeWord -> [Move]
+guess secret = guessAcc [1,1,2,2] allCodewords 
+    where
+        guessAcc :: CodeWord -> [CodeWord] -> [Move]
+        guessAcc candidate solution  =
+            let result = match candidate secret
+                narrowedSolution = narrowSolution candidate result solution
+            in case result of
+                    (4,0) -> [(candidate, result)]
+                    other -> (candidate, result) : guessAcc nextCandidate narrowedSolution
+                        where 
+                            (nextCandidate, nextResult) = guessMove candidate secret narrowedSolution
+
+
+

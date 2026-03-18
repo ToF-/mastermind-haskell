@@ -44,7 +44,7 @@ spec = do
                 length (narrowSolution [1,1,2,2] (2,1) allCodewords) `shouldBe` 32
 
         describe "guessMove" $ do
-            it "should return a list of moves and results when secret is guessed" $ do
+            it "should return a move and it's result when matched with secret" $ do
                 let solution = narrowSolution [1,1,2,2] (0, 1) allCodewords
                 guessMove [1,1,2,2] [4,6,1,5] solution `shouldBe` ([2,3,4,4], (0, 1))
                 let solution' = narrowSolution [2,3,4,4] (0, 1) solution
@@ -53,8 +53,11 @@ spec = do
                 guessMove [3,5,1,6] [4,6,1,5] solution'' `shouldBe` ([1,4,6,1],(0,3))
                 let solution''' = narrowSolution [1,4,6,1] (0, 3) solution''
                 guessMove [1,4,6,1] [4,6,1,5] solution''' `shouldBe` ([4,6,1,5],(4,0))
--- 1) 1122 : ○
--- 2) 2344 : ○
--- 3) 3516 : ●○○
--- 4) 1461 : ○○○
--- 5) 4615 : ●●●●
+
+        describe "guess" $ do
+            it "should return the list of moves to correct guess" $ do
+                guess [4,6,1,5] `shouldBe` [([1,1,2,2], (0,1))
+                                            ,([2,3,4,4], (0,1))
+                                            ,([3,5,1,6], (1,2))
+                                            ,([1,4,6,1], (0,3))
+                                            ,([4,6,1,5], (4,0))]
